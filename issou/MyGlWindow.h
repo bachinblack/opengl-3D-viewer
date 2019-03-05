@@ -19,6 +19,7 @@
 #include "Sphere.h"
 #include "vboteapot.h"
 #include "Mesh.h"
+#include "SpotLight.h"
 
 class MyGlWindow {
 public:
@@ -29,17 +30,20 @@ public:
 	Viewer		*m_viewer;
 	
 	Light		*lightSource;
+	std::vector<Light *> lightSources;
+	SpotLight * spotLight;
 
 private:
 	Model			m_model;
 
-	glm::vec4	lightLocation;
 	glm::vec3	Ld;
 
 	ShaderProgram	*s_simple;
 	std::vector<AItem *>	simple;
 	ShaderProgram	*s_light;
 	std::vector<AItem *>	light;
+	ShaderProgram	*s_spot;
+	std::vector<AItem *>	spot;
 	ShaderProgram	*s_textured;
 	std::vector<AItem *>	textured;
 

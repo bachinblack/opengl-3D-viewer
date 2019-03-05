@@ -121,7 +121,10 @@ int mainloop(GLFWwindow *window, int width, int height) {
 		//setting light attribute
 		if (lightPos != lastLightPos) {
 			lastLightPos = lightPos;
-			win->lightSource->transform.setPosition(lightPos);
+			for (auto it : win->lightSources) {
+				it->transform.position.y = lightPos.y;
+			}
+			//win->lightSource->transform.setPosition(lightPos);
 		}
 
 		glfwGetFramebufferSize(window, &w, &h);

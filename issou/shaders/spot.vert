@@ -8,6 +8,7 @@ uniform mat4 modelView;
 uniform mat4 projection;
 
 uniform mat3 normalMatrix;
+//uniform vec4 lightLoc;
 
 out vec3 fColor;
 out vec3 FL;

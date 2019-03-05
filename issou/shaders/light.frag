@@ -13,15 +13,3 @@ void main()
 {
 	gl_FragColor = vec4(LightIntensity, 1.0);
 }
-
-//precision highp float;
-//uniform float time;
-//uniform vec2 resolution;
-//varying vec3 fPosition;
-//varying vec3 fNormal;
-//varying vec3 color;
-//
-//void main()
-//{
-//  gl_FragColor = vec4(color, 1.0);
-//}

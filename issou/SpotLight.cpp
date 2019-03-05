@@ -1,51 +1,27 @@
-#include "Light.h"
-
-
-//LightManager::LightManager(std::vector<Light *>& lights)
-//	: lightSources(lights)
-//{
-//
-//}
-//
-//LightManager::~LightManager() {
-//	delete lightLocations;
-//}
-//
-//GLfloat *LightManager::getLocationsArray(const glm::vec4& view) const {
-//
-//	GLfloat *tmp = new  GLfloat[lightSources.size() * 4];
-//	glm::vec4 loc;
-//	int i = 0;
-//
-//	for (AItem *it : lightSources) {
-//		loc = (view * glm::vec4(it->transform.getPosition(), 1));
-//		tmp[i++] = loc.x;
-//		tmp[i++] = loc.y;
-//		tmp[i++] = loc.z;
-//		tmp[i++] = loc.w;
-//	}
-//
-//	return tmp;
-//}
+#include "SpotLight.h"
 
 
 
-Light::Light(const Transform& trans, const Shader &pr, const glm::vec3& col)
-	: AItem(trans, pr), color(col)
+SpotLight::SpotLight(const Transform& trans, const Shader &pr, const glm::vec3& color)
+	: AItem(trans, pr), direction(glm::vec3(0, -1, 0)), cutoff(1), attenuation(1), innerCutoff(1), col(color)
 {
 	this->setup();
 }
 
 
-void Light::setup()
+SpotLight::~SpotLight()
+{
+}
+
+void SpotLight::setup()
 {
 	GLfloat vertices[] = {
 		// base
 		-0.5, .5, .5,
 		-.5, .5, -0.5,
 		.5, .5 , 0,
-		 // bottom
-		0, -0.5, 0,
+		// bottom
+	   0, -0.5, 0,
 	};
 
 	//GLushort data[] = {
@@ -65,13 +41,10 @@ void Light::setup()
 	};
 
 	GLfloat colors[] = {
-		color.x, color.y, color.z,
-		color.x, color.y, color.z,
-		color.x, color.y, color.z,
-		color.x, color.y, color.z,
-		//.9f, .35f, .2f,
-		//.9f, .35f, .2f,
-		//.8f, .25f, .8f,
+		.9f, .35f, .2f,
+		.9f, .35f, .2f,
+		.9f, .35f, .2f,
+		.8f, .25f, .8f,
 	};
 
 	glGenVertexArrays(1, &this->vaoHandle);
@@ -109,7 +82,7 @@ void Light::setup()
 	glBindVertexArray(0);
 }
 
-void Light::perform_draw()
+void SpotLight::perform_draw()
 {
 	glLineWidth(5.0);
 

@@ -234,7 +234,7 @@ void Mesh::perform_draw() {
 		//glUniform3fv(shader.program->uniform("Kd"), 1, glm::value_ptr(diffuse));
 		//glUniform3fv(shader.program->uniform("Ka"), 1, glm::value_ptr(ambient));
 		//glUniform3fv(shader.program->uniform("Ks"), 1, glm::value_ptr(specular));
-		glUniform1f(shader.program->uniform("Shiness"), shiness);
+		glUniform1f(shader.program->uniform("Shininess"), shiness);
 
 		meshEntries.at(i)->render();
 	}

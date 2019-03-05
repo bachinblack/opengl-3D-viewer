@@ -243,7 +243,8 @@ public:
 		// Generate a unique Id / handle for the shader program
 		// Note: We MUST have a valid rendering context before generating the programId or we'll segfault!
 		programId = glCreateProgram();
-		glUseProgram(programId);
+		// apparently, glUseProgram generates an openGlError
+		//glUseProgram(programId);
 
 		// Initially, we have zero shaders attached to the program
 		shaderCount = 0;
