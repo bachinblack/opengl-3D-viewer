@@ -3,8 +3,9 @@
 layout (location  = 0) in vec3 vertexPosition; // set the attr. number
 layout (location = 1) in vec3 vertexColor;
 
-out vec3 fColor; // for sending vertex color to fragment shader
 uniform mat4 MVP;
+
+out vec3 fColor; // for sending vertex color to fragment shader
 
 
 void main()

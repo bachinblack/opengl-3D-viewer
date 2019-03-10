@@ -41,20 +41,20 @@ void AItem::apply_transform() {
 }
 
 
-void AItem::setModelView(const glm::mat4& view)
+void AItem::setModelView(const glm::mat4& view, ShaderProgram *pr)
 {
 
 	model = m_model.getMatrix();
 
-	glm::mat4 MVP = *shader.projection * *shader.view * model;
-	glUniformMatrix4fv(shader.program->uniform("MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
+	glm::mat4 MVP = *shader.projection * view * model;
+	glUniformMatrix4fv(pr->uniform("MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
 
 	glm::mat4 modelview = view * model;
 	glm::mat4 inverseModelView = glm::inverse(modelview);
 	glm::mat3 normalMatrix = glm::mat3(glm::transpose(inverseModelView));
 }
 
-void AItem::draw(const glm::mat4 &view)
+void AItem::draw(const glm::mat4 &view, ShaderProgram *pr)
 {
 	if (visible) {
 		m_model.glPushMatrix();
@@ -62,7 +62,7 @@ void AItem::draw(const glm::mat4 &view)
 		glBindVertexArray(this->vaoHandle);
 
 		this->apply_transform();
-		this->setModelView(view);
+		this->setModelView(view, pr ? pr : this->shader.program);
 		this->perform_draw();
 
 		m_model.glPopMatrix();

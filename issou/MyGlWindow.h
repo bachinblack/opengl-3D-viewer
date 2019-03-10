@@ -21,37 +21,30 @@
 #include "Mesh.h"
 #include "SpotLight.h"
 
+#include "ShaderWrappers.h"
+
+
 class MyGlWindow {
 public:
 	MyGlWindow(int w, int h);
 	~MyGlWindow();
 	void draw();
 	void resize(int width, int height);
-	Viewer		*m_viewer;
+	Viewer		*_viewer;
 	
-	Light		*lightSource;
 	std::vector<Light *> lightSources;
 	SpotLight * spotLight;
 
 private:
-	Model			m_model;
+	int	_width;
+	int _height;
 
-	glm::vec3	Ld;
+	glm::mat4		_view, _projection;
+	Model			_model;
+	AItem		   *_attached;
 
-	ShaderProgram	*s_simple;
-	std::vector<AItem *>	simple;
-	ShaderProgram	*s_light;
-	std::vector<AItem *>	light;
-	ShaderProgram	*s_spot;
-	std::vector<AItem *>	spot;
-	ShaderProgram	*s_textured;
-	std::vector<AItem *>	textured;
+	std::vector<AShaderWrapper *> _shaders;
 
-	glm::mat4				view, projection;
-	AItem					*attached;
-	int	m_width;
-	int m_height;
-	int currentView;
-
-	void setupBuffer();
+	void getViewProjection(void);
+	void init(void);
 };

@@ -167,6 +167,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MyGlWindow.cpp" />
     <ClCompile Include="Obj.cpp" />
+    <ClCompile Include="ShaderWrappers.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="SpotLight.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="ModelView.h" />
     <ClInclude Include="MyGlWindow.h" />
     <ClInclude Include="Obj.h" />
+    <ClInclude Include="ShaderWrappers.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="teapotdata.h" />

@@ -28,7 +28,7 @@ private:
 };
 
 struct Shader {
-	Shader(glm::mat4 * const v, glm::mat4 * const pj, ShaderProgram * const pg)
+	Shader(glm::mat4 * const v, glm::mat4 * const pj, ShaderProgram * const pg=nullptr)
 		: view(v), projection(pj), program(pg) {};
 public:
 	glm::mat4		*view;
@@ -43,7 +43,7 @@ public:
 	~AItem();
 
 	void setVisible(const bool);
-	void draw(const glm::mat4&);
+	void draw(const glm::mat4&, ShaderProgram *pr = nullptr);
 	
 	Transform		transform;
 
@@ -53,7 +53,7 @@ protected:
 	virtual void perform_draw();
 	
 	virtual void apply_transform();
-	virtual void setModelView(const glm::mat4& view);
+	virtual void setModelView(const glm::mat4& view, ShaderProgram *pr = nullptr);
 
 	Shader					shader;
 	Model					m_model;

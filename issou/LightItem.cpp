@@ -182,23 +182,33 @@ void LightItem::setup()
 	glBindVertexArray(0);
 }
 
-void LightItem::setModelView(const glm::mat4& view)
+void LightItem::setModelView(const glm::mat4& view, ShaderProgram *pr)
 {
 	model = m_model.getMatrix();
+	if (pr->uniform("MVC")) {
+		glm::mat4 MVC = *this->shader.view * this->model * *this->shader.projection;
 
-	glm::mat4 MV = *this->shader.view * this->model;
-	glUniformMatrix4fv(shader.program->uniform("modelView"), 1, GL_FALSE, glm::value_ptr(MV));
-	glUniformMatrix4fv(shader.program->uniform("projection"), 1, GL_FALSE, glm::value_ptr(*this->shader.projection));
+		glUniformMatrix4fv(pr->uniform("MVC"), 1, GL_FALSE, glm::value_ptr(MVC));
+	
+	} else if (pr->uniform("modelView")) {
+		glm::mat4 MV = *this->shader.view * this->model;
+
+		glUniformMatrix4fv(pr->uniform("modelView"), 1, GL_FALSE, glm::value_ptr(MV));
+
+	} else {
+		glUniformMatrix4fv(pr->uniform("model"), 1, GL_FALSE, glm::value_ptr(this->model));
+		glUniformMatrix4fv(pr->uniform("view"), 1, GL_FALSE, glm::value_ptr(*this->shader.view));
+	}
+	glUniformMatrix4fv(pr->uniform("projection"), 1, GL_FALSE, glm::value_ptr(*this->shader.projection));
 
 	glm::mat4 modelview = view * model;
 	glm::mat4 inverseModelView = glm::inverse(modelview);
 	glm::mat3 normalMatrix = glm::mat3(glm::transpose(inverseModelView));
 
-	glUniformMatrix3fv(shader.program->uniform("normalMatrix"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
-	//std::cout << "col: " << glm::to_string(visual.getColor()) << std::endl;
-	glUniform3fv(shader.program->uniform("Kd"), 1, glm::value_ptr(visual.getColor()));
-	glUniform1f(shader.program->uniform("Shininess"), visual.getShininess());
-	glUniform1f(shader.program->uniform("Alpha"), visual.getAlpha());
+	glUniformMatrix3fv(pr->uniform("normalMatrix"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
+	glUniform3fv(pr->uniform("Kd"), 1, glm::value_ptr(visual.getColor()));
+	glUniform1f(pr->uniform("Shininess"), visual.getShininess());
+	glUniform1f(pr->uniform("Alpha"), visual.getAlpha());
 }
 
 

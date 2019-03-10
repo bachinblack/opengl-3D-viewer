@@ -17,8 +17,7 @@
 //
 //};
 
-class Light :
-	public AItem
+class Light : public AItem
 {
 public:
 	Light(const Transform& trans, const Shader &pr, const glm::vec3& col);

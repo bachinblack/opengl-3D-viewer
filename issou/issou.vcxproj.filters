@@ -93,6 +93,9 @@
     <ClCompile Include="SpotLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ShaderWrappers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyGlWindow.h">
@@ -183,6 +186,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpotLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderWrappers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

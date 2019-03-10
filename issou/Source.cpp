@@ -78,17 +78,17 @@ void mouseDragging(double width, double height)
 	if (lbutton_down) {
 		float fractionChangeX = static_cast<float>(cx - m_lastMouseX) / static_cast<float>(width);
 		float fractionChangeY = static_cast<float>(m_lastMouseY - cy) / static_cast<float>(height);
-		win->m_viewer->rotate(fractionChangeX, fractionChangeY);
+		win->_viewer->rotate(fractionChangeX, fractionChangeY);
 	}
 	else if (mbutton_down) {
 		float fractionChangeX = static_cast<float>(cx - m_lastMouseX) / static_cast<float>(width);
 		float fractionChangeY = static_cast<float>(m_lastMouseY - cy) / static_cast<float>(height);
-		win->m_viewer->zoom(fractionChangeY);
+		win->_viewer->zoom(fractionChangeY);
 	}
 	else if (rbutton_down) {
 		float fractionChangeX = static_cast<float>(cx - m_lastMouseX) / static_cast<float>(width);
 		float fractionChangeY = static_cast<float>(m_lastMouseY - cy) / static_cast<float>(height);
-		win->m_viewer->translate(-fractionChangeX, -fractionChangeY, 1);
+		win->_viewer->translate(-fractionChangeX, -fractionChangeY, 1);
 	}
 	m_lastMouseX = cx;
 	m_lastMouseY = cy;

@@ -20,7 +20,7 @@ protected:
 	void setup() override;
 	void perform_draw() override;
 	
-	void setModelView(const glm::mat4& view) override;
+	void setModelView(const glm::mat4& view, ShaderProgram *pr) override;
 
 	glm::vec3 computeNormal(glm::vec3 *p);
 };
