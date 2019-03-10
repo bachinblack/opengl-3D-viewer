@@ -28,12 +28,12 @@ class MyGlWindow {
 public:
 	MyGlWindow(int w, int h);
 	~MyGlWindow();
+	
 	void draw();
 	void resize(int width, int height);
-	Viewer		*_viewer;
 	
+	Viewer		*_viewer;
 	std::vector<Light *> lightSources;
-	SpotLight * spotLight;
 
 private:
 	int	_width;
