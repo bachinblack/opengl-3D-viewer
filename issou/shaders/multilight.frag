@@ -14,9 +14,9 @@ uniform vec3 La; // ambient light color
 uniform vec3 Ks; // specular object color
 uniform vec3 Ls; // specular light color
 
-
 uniform float Shininess; // shininess of the object
 uniform float Alpha; // alpha channel (transparency)
+
 
 out vec4 fragColor;
 

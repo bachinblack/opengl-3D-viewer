@@ -14,11 +14,14 @@ uniform vec3 La; // ambient light color
 
 uniform float Alpha; // alpha channel (transparency)
 
+
 out vec4 fragColor;
+
 
 // values for rounding (levels = 3 : values = 0, .25, .5, .75)
 const int levels = 3;
 const float scaleFactor = 1.0 / levels;
+
 
 void main()
 {
