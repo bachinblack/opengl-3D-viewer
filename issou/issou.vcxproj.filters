@@ -96,6 +96,18 @@
     <ClCompile Include="ShaderWrappers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TexturedItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturedMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturedSphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeMappedMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyGlWindow.h">
@@ -191,5 +203,37 @@
     <ClInclude Include="ShaderWrappers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TexturedItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturedMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturedSphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMappedMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\tam\tam1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\tam\tam2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\tam\tam3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\tam\tam4.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\tam\tam5.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\tam\tam6.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

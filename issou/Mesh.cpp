@@ -15,10 +15,12 @@
 *	Constructor, loading the specified aiMesh
 **/
 
+#include "stb/stb_image.h"
+
+std::string root = "C:/Users/54604/Downloads/Sponza-master/";
 
 
-
-Mesh::MeshEntry::MeshEntry(aiMesh *mesh, const aiScene* scene, Mesh * m)
+Mesh::MeshEntry::MeshEntry(const unsigned short id, const aiScene* scene, Mesh * m)
 {
 	parent = m;
 
@@ -27,10 +29,14 @@ Mesh::MeshEntry::MeshEntry(aiMesh *mesh, const aiScene* scene, Mesh * m)
 	vbo[NORMAL_BUFFER] = NULL;
 	vbo[INDEX_BUFFER] = NULL;
 
+	aiMesh *mesh = scene->mMeshes[id];
+
+
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
 	elementCount = mesh->mNumFaces * 3;
+
 
 	if (mesh->HasPositions()) {
 		float *vertices = new float[mesh->mNumVertices * 3];
@@ -106,6 +112,39 @@ Mesh::MeshEntry::MeshEntry(aiMesh *mesh, const aiScene* scene, Mesh * m)
 		delete[] indices;
 	}
 
+	// Tangent space for normal
+	if (mesh->HasTangentsAndBitangents()) {
+
+		float *tangent = new float[mesh->mNumVertices * 3];
+		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
+			tangent[i * 3] = mesh->mTangents[i].x;
+			tangent[i * 3 + 1] = mesh->mTangents[i].y;
+			tangent[i * 3 + 2] = mesh->mTangents[i].z;
+		}
+		float *bittangent = new float[mesh->mNumVertices * 3];
+		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
+			bittangent[i * 3] = mesh->mBitangents[i].x;
+			bittangent[i * 3 + 1] = mesh->mBitangents[i].y;
+			bittangent[i * 3 + 2] = mesh->mBitangents[i].z;
+		}
+
+		glGenBuffers(1, &vbo[TANGENT]);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[TANGENT]);
+		glBufferData(GL_ARRAY_BUFFER, 3 * mesh->mNumVertices * sizeof(GLfloat), tangent, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		glEnableVertexAttribArray(4);
+	
+		glGenBuffers(1, &vbo[BITTANGENT]);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[BITTANGENT]);
+		glBufferData(GL_ARRAY_BUFFER, 3 * mesh->mNumVertices * sizeof(GLfloat), bittangent, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		glEnableVertexAttribArray(5);
+	}
+
+
+	texID = mesh->mMaterialIndex;
 	if (mesh->mMaterialIndex >= 0) {
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		
@@ -113,14 +152,24 @@ Mesh::MeshEntry::MeshEntry(aiMesh *mesh, const aiScene* scene, Mesh * m)
 		material->Get(AI_MATKEY_COLOR_DIFFUSE, dcolor);
 		material->Get(AI_MATKEY_COLOR_AMBIENT, acolor);
 		material->Get(AI_MATKEY_COLOR_SPECULAR, scolor);
-			   	
-	
+		
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0) { //we only care diffuse texture
+			aiString Path;
+			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+				texpath = Path.data;
+			}
+		}
+		//if (material->GetTextureCount(aiTextureType_NORMALS) > 0) {
+		//	aiString Path;
+		//	if (material->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+		//		normpath = Path.data;
+		//		std::cout << normpath << std::endl;
+		//	}
+		//}
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-	
 }
 
 /**
@@ -143,6 +192,13 @@ Mesh::MeshEntry::~MeshEntry() {
 		glDeleteBuffers(1, &vbo[INDEX_BUFFER]);
 	}
 
+	if (vbo[TANGENT]) {
+		glDeleteBuffers(1, &vbo[TANGENT]);
+	}
+
+	if (vbo[BITTANGENT]) {
+		glDeleteBuffers(1, &vbo[BITTANGENT]);
+	}
 	glDeleteVertexArrays(1, &vao);
 
 	
@@ -168,11 +224,10 @@ Mesh::Mesh(const Transform& trans, const Shader& sh, const char *filename, const
 {
 	shader = sh;
 
-	std::string fullname;
-	fullname = MODEL_PATH + std::string(filename);
+	setRoot(filename);
 	
 	Assimp::Importer importer;   //aiProcessPreset_TargetRealtime_Fast
-	const aiScene* scene = importer.ReadFile(fullname.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_OptimizeMeshes);
+	const aiScene* scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_OptimizeMeshes | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals);
 
 	// Check for errors
 	if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
@@ -182,10 +237,16 @@ Mesh::Mesh(const Transform& trans, const Shader& sh, const char *filename, const
 	}
 
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
-		meshEntries.push_back(new Mesh::MeshEntry(scene->mMeshes[i], scene, this));
+		meshEntries.push_back(new Mesh::MeshEntry(i, scene, this));
 	}
-	   	
-	
+}
+
+
+void Mesh::setRoot(const std::string& name)
+{
+	name.substr();
+	std::size_t found = name.find_last_of("/\\");
+	_root = name.substr(0, found) + '/';
 }
 
 /**
@@ -209,33 +270,9 @@ void Mesh::perform_draw() {
 
 		MeshEntry * m = meshEntries[i];
 		
+		glUniform1i(this->shader.program->uniform("text"), 0);
+		glUniform1f(shader.program->uniform("Shininess"), (m->shininessStrength || 10.0f));
 
-		//glm::vec3 diffuse = glm::vec3(meshEntries.at(i)->dcolor.r, meshEntries.at(i)->dcolor.r, meshEntries.at(i)->dcolor.r);
-		//glm::vec3 specular = glm::vec3(meshEntries.at(i)->scolor.r, meshEntries.at(i)->scolor.r, meshEntries.at(i)->scolor.r);
-		//glm::vec3 ambient = glm::vec3(meshEntries.at(i)->acolor.r, meshEntries.at(i)->acolor.r, meshEntries.at(i)->acolor.r);
-
-		//if (glm::length(ambient) == 0) {
-		//	ambient = glm::vec3(0.3, 0.3, 0.3);
-		//}
-
-		//if (glm::length(diffuse) == 0) {
-		//	diffuse = glm::vec3(0.8, 0.8, 0.8);
-		//}
-
-		//if (glm::length(specular) == 0) {
-		//	specular = glm::vec3(0.3, 0.3, 0.3);
-		//}
-
-		float shiness = meshEntries.at(i)->shininessStrength;
-
-		if (shiness == 0)
-			shiness = 10.0f;
-
-		//glUniform3fv(shader.program->uniform("Kd"), 1, glm::value_ptr(diffuse));
-		//glUniform3fv(shader.program->uniform("Ka"), 1, glm::value_ptr(ambient));
-		//glUniform3fv(shader.program->uniform("Ks"), 1, glm::value_ptr(specular));
-		glUniform1f(shader.program->uniform("Shininess"), shiness);
-
-		meshEntries.at(i)->render();
+		m->render();
 	}
 }

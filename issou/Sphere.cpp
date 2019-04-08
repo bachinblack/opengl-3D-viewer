@@ -26,7 +26,7 @@ void Sphere::setup()
 	// Normals
 	GLfloat *n = new GLfloat[3 * nVerts];
 	// Tex coords
-	GLfloat *tex = new GLfloat[2 * nVerts];    //we don't use it now
+	GLfloat *tex = new GLfloat[2 * nVerts];
 	// Index
 	GLuint *el = new GLuint[elements];  //index
 
@@ -65,6 +65,19 @@ void Sphere::setup()
 		(void *)0
 	);
 	glEnableVertexAttribArray(1);
+
+	glGenBuffers(1, &this->vbo_tex);
+	glBindBuffer(GL_ARRAY_BUFFER, this->vbo_tex);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * nVerts * 2, tex, GL_STATIC_DRAW);
+	glVertexAttribPointer(
+		2,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		(void *)0
+	);
+	glEnableVertexAttribArray(2);
 
 	glGenBuffers(1, &this->ibo_elements);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ibo_elements);

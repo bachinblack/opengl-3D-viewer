@@ -214,10 +214,5 @@ void LightItem::setModelView(const glm::mat4& view, ShaderProgram *pr)
 
 void LightItem::perform_draw()
 {
-	//glm::mat4 modelview = view * model;
-	//glm::mat4 inverseModelView = glm::inverse(modelview);
-	//glm::mat3 normalMatrix = glm::mat3(glm::transpose(inverseModelView));
-	//glUniformMatrix4fv(m_shaderProgram->uniform("normalMatrix"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
-
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 }

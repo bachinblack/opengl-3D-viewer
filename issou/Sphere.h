@@ -29,6 +29,7 @@ private:
 	float radius;
 	GLuint slices, stacks;
 
+	GLuint vbo_tex;
 	void generateVerts(float *, float *, float *, GLuint *);
 };
 

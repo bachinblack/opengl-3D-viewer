@@ -6,6 +6,8 @@ layout (location = 2) in vec3 color;
 
 
 uniform mat4 modelView;
+uniform mat4 model;
+uniform mat4 view;
 uniform mat4 projection;
 
 uniform mat3 normalMatrix;
@@ -19,8 +21,8 @@ void main()
 {
 	fNormal = normalize(normalMatrix * normal);
 
-	vec4 pos = modelView * vec4(vertexPosition, 1.0);
+	vec4 pos = (modelView) * vec4(vertexPosition, 1.0);
 	fPosition = pos.xyz;
 	
-	gl_Position = projection * pos;
+	gl_Position = projection * (modelView * vec4(vertexPosition, 1.0));
 }

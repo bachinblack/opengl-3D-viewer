@@ -129,6 +129,10 @@ glm::vec3 Viewer::getViewPoint() const {
 	return(m_viewPoint);
 }
 
+glm::vec3 *Viewer::getViewPointPtr() {
+	return(&m_viewPoint);
+}
+
 glm::vec3 Viewer::getViewCenter() const {
 	return(m_viewCenter);
 }

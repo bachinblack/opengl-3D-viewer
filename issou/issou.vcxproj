@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -153,6 +153,7 @@
     <ClCompile Include="bmpLoader.cpp" />
     <ClCompile Include="CheckeredFloor.cpp" />
     <ClCompile Include="ColorCube.cpp" />
+    <ClCompile Include="CubeMappedMesh.cpp" />
     <ClCompile Include="LightItem.cpp" />
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="Global.cpp" />
@@ -168,9 +169,13 @@
     <ClCompile Include="MyGlWindow.cpp" />
     <ClCompile Include="Obj.cpp" />
     <ClCompile Include="ShaderWrappers.cpp" />
+    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="SpotLight.cpp" />
+    <ClCompile Include="TexturedItem.cpp" />
+    <ClCompile Include="TexturedMesh.cpp" />
+    <ClCompile Include="TexturedSphere.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="vboteapot.cpp" />
     <ClCompile Include="Viewer.cpp" />
@@ -181,6 +186,7 @@
     <ClInclude Include="AItem.h" />
     <ClInclude Include="CheckeredFloor.h" />
     <ClInclude Include="ColorCube.h" />
+    <ClInclude Include="CubeMappedMesh.h" />
     <ClInclude Include="LightItem.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="Global.h" />
@@ -201,14 +207,26 @@
     <ClInclude Include="MyGlWindow.h" />
     <ClInclude Include="Obj.h" />
     <ClInclude Include="ShaderWrappers.h" />
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="teapotdata.h" />
+    <ClInclude Include="TexturedItem.h" />
+    <ClInclude Include="TexturedMesh.h" />
+    <ClInclude Include="TexturedSphere.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="vboteapot.h" />
     <ClInclude Include="Viewer.h" />
     <ClInclude Include="Visual.h" />
     <ClInclude Include="wireCube.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\tam\tam1.png" />
+    <Image Include="resources\tam\tam2.png" />
+    <Image Include="resources\tam\tam3.png" />
+    <Image Include="resources\tam\tam4.png" />
+    <Image Include="resources\tam\tam5.png" />
+    <Image Include="resources\tam\tam6.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

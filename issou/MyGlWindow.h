@@ -20,9 +20,12 @@
 #include "vboteapot.h"
 #include "Mesh.h"
 #include "SpotLight.h"
-
+#include "TexturedItem.h"
+#include "TexturedSphere.h"
+#include "TexturedMesh.h"
+#include "CubeMappedMesh.h"
 #include "ShaderWrappers.h"
-
+#include "Skybox.h"
 
 class MyGlWindow {
 public:

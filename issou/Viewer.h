@@ -33,6 +33,7 @@ public:
 
 	/** The worldspace location of the center of focus */
 	glm::vec3 getViewPoint() const;
+	glm::vec3 *getViewPointPtr();
 	/** This corresponds to the worldspace location of  OpenGL's "look at" point */
 	glm::vec3 getViewCenter() const;
 	/**	The up vector in worldspace coordinates */

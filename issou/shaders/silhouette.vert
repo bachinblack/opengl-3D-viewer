@@ -11,7 +11,8 @@ uniform mat4 projection;
 
 void main()
 {
-	vec4 pos = modelView * vec4(vertexPosition, 1.0);
+	vec4 pos = modelView * vec4(vertexPosition, 1.0) * .2;
 	
 	gl_Position = projection * pos;
+//	gl_Position = modelView * projection * vec4(vertexPosition + normal * .2);
 }

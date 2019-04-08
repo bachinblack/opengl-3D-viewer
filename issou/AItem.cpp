@@ -49,9 +49,9 @@ void AItem::setModelView(const glm::mat4& view, ShaderProgram *pr)
 	glm::mat4 MVP = *shader.projection * view * model;
 	glUniformMatrix4fv(pr->uniform("MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
 
-	glm::mat4 modelview = view * model;
-	glm::mat4 inverseModelView = glm::inverse(modelview);
-	glm::mat3 normalMatrix = glm::mat3(glm::transpose(inverseModelView));
+	//glm::mat4 modelview = view * model;
+	//glm::mat4 inverseModelView = glm::inverse(modelview);
+	//glm::mat3 normalMatrix = glm::mat3(glm::transpose(inverseModelView));
 }
 
 void AItem::draw(const glm::mat4 &view, ShaderProgram *pr)

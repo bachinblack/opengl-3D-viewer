@@ -9,8 +9,6 @@
 #include "assimp\mesh.h"
 #include "LightItem.h"
 
-# define MODEL_PATH ""
-
 class Mesh : public LightItem
 {
 public:
@@ -19,24 +17,33 @@ public:
 
 	struct MeshEntry {
 		enum BUFFERS {
-			VERTEX_BUFFER, TEXCOORD_BUFFER, NORMAL_BUFFER, INDEX_BUFFER
+			VERTEX_BUFFER, TEXCOORD_BUFFER, NORMAL_BUFFER, INDEX_BUFFER, TANGENT, BITTANGENT
 		};
 		GLuint vao;
-		GLuint vbo[4];
+		GLuint vbo[6];
 
 		unsigned int elementCount;
 		aiColor3D dcolor;
 		aiColor3D acolor;
 		aiColor3D scolor;
 		float shininessStrength;
-		MeshEntry(aiMesh *mesh, const aiScene* scene, Mesh * m);
+		MeshEntry(const unsigned short id, const aiScene* scene, Mesh * m);
 		~MeshEntry();
 		Mesh * parent;	
 		void render();	
+	
+		std::string texpath, normpath;
+		//char *texpath;
+		unsigned int texID;
+		GLuint txt;
 	};
-		
+
+
 	std::vector<MeshEntry*> meshEntries;
 
-private:
-	void perform_draw() override;	
+protected:
+	std::string		_root;
+
+	void setRoot(const std::string& name);
+	void perform_draw() override;
 };
