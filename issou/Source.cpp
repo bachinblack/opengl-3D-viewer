@@ -180,7 +180,6 @@ void initGL() {
 		std::cerr << "failed to init glfw. exiting..." << std::endl;
 		exit(1);
 	}
-
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -213,6 +212,7 @@ int main() {
 	/* Create a windowed mode window and its OpenGL context */
 	GLFWwindow *window = glfwCreateWindow(width, height, "OpenGL FrameWork", NULL, NULL);
 	setupImgui(window);
+
 	if (!window)
 	{
 		glfwTerminate();
@@ -228,8 +228,9 @@ int main() {
 		std::cout << "glewInit failed, aborting." << std::endl;
 		return 1;
 	}
-
-	glfwSwapInterval(1);
+	
+	// Set to 1 for vsync (capped to the screen's capability)
+	glfwSwapInterval(0);
 	glfwSetKeyCallback(window, key_callback); // call for kb
 	glfwSetWindowSizeCallback (window, winSize); // call for kb
 	glfwSetWindowTitle(window, "issouTV");
