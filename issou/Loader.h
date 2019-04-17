@@ -398,6 +398,30 @@ public:
 		return uniformMap[uniformName];
 	}
 
+
+	std::map<std::string, int> subroutineMap;
+
+
+	int addSubroutine(GLenum shadertype, const std::string& uniformName)
+	{
+		subroutineMap[uniformName] = glGetSubroutineIndex(programId, shadertype, uniformName.c_str());
+		return subroutineMap[uniformName];
+	}
+
+	GLuint subroutine(const std::string& uniform)
+	{
+		//static std::map<std::string, int>::const_iterator uniformIter;
+
+		//uniformIter = attributeMap.find(uniform);
+
+		//if (uniformIter == subroutineMap.end())
+		//{
+		//	std::cout << "Could not find subroutine in shader program: " << uniform;
+		//}
+
+		return subroutineMap[uniform];
+	}
+
 }; // End of class
 
 #endif // SHADER_PROGRAM_HPP

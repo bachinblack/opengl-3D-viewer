@@ -11,6 +11,7 @@ using glm::vec3;
 using glm::mat3;
 using glm::mat4;
 
+// new VBOTeapot(transform, shader, 16, glm::mat4(1), visual));
 class VBOTeapot : public LightItem
 {
 public:

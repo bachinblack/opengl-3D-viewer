@@ -105,8 +105,9 @@ int mainloop(GLFWwindow *window, int width, int height) {
 	
 	glm::vec3 lightPos(3, 3, 3);
 	glm::vec3 lastLightPos(3, 3, 3);
-	float lightColor[3] = { 1, 1, 1 };
-	float lastLightColor[3] = { 1, 1, 1 };
+	glm::vec3 lightCol(1, 1, 1);
+	glm::vec3 lastLightCol(1, 1, 1);
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -118,14 +119,21 @@ int mainloop(GLFWwindow *window, int width, int height) {
 
 		int w, h;
 
-		//setting light attribute
+		//setting light attributes depending on ImGui inputs
 		if (lightPos != lastLightPos) {
 			lastLightPos = lightPos;
 			for (auto it : win->lightSources) {
 				it->transform.position.y = lightPos.y;
 			}
-			//win->lightSource->transform.setPosition(lightPos);
 		}
+
+		if (lightCol != lastLightCol) {
+			lastLightCol = lightCol;
+			for (auto it : win->lightSources) {
+				it->setColor(lightCol);
+			}
+		}
+
 
 		glfwGetFramebufferSize(window, &w, &h);
 		glViewport(0, 0, w, h);
@@ -139,15 +147,8 @@ int mainloop(GLFWwindow *window, int width, int height) {
 		{
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::Text("Light control");
-			ImGui::SliderFloat("Light X", &lightPos.x, -10.0f, 10.0f);
 			ImGui::SliderFloat("Light Y", &lightPos.y, -10.0f, 10.0f);
-			ImGui::SliderFloat("Light Z", &lightPos.z, -10.0f, 10.0f);
-			ImGui::ColorEdit3("Light color", lightColor, 0);
-			//	ImGui::SliderFloat("Box Horizontal", &horizontal, 0.0f, 1.0f);
-		//	ImGui::SliderFloat("Box Vertical", &vertical, 0.0f, 1.0f);
-		//	
-		//	ImGui::RadioButton("radio a", &radio, 0); ImGui::SameLine();
-		//	ImGui::RadioButton("radio b", &radio, 1);
+			ImGui::ColorEdit3("Light color", glm::value_ptr(lightCol), 0);
 			ImGui::End();
 		}
 

@@ -27,6 +27,10 @@
 #include "ShaderWrappers.h"
 #include "Skybox.h"
 
+#include "FBO/textureManager.h"
+#include "FBO/fboManager.h"
+#include "FBO/TextureViewer.h"
+
 class MyGlWindow {
 public:
 	MyGlWindow(int w, int h);
@@ -49,5 +53,19 @@ private:
 	std::vector<AShaderWrapper *> _shaders;
 
 	void getViewProjection(void);
+	
 	void init(void);
+	void performDraw(void);
+
+	// fbo stuff
+	void initFbo(const std::string& fragShader);
+	void initFboSubroutine(const std::string& subroutine);
+	void setupFBO();
+	void drawThroughFbo(void);
+	float _useFbo = false;
+
+	FBTextureManager texManager;
+	FboManager *_fbo;
+	TextureViewer *_ctv;
+
 };

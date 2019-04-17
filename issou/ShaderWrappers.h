@@ -7,8 +7,6 @@
 #include "Light.h"
 
 
-//std::string SH_DIR = "./shaders/";
-
 ShaderProgram *createShaderProgram(const std::string shname, const std::vector<std::string>& uniforms);
 
 
@@ -87,7 +85,8 @@ public:
 	ShaderHandDrawn();
 private:
 
-	GLuint	_shadowLevels[6];
+	void setTamTextures(void);
+	GLuint	_shadLv[6];
 	void setUniforms(const glm::mat4& projection) override;
 };
 

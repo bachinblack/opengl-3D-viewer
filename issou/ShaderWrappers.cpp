@@ -1,10 +1,6 @@
 #include "ShaderWrappers.h"
 #include "stb/stb_image.h"
 
-//#ifndef STB_IMAGE_IMPLEMENTATION
-//	#define STB_IMAGE_IMPLEMENTATION
-//	#include "stb/stb_image.h"
-//#endif
 
 AShaderWrapper::AShaderWrapper() : _sh(nullptr), _lightPos(nullptr), _lightCol(nullptr), _lightNb(0) { }
 
@@ -252,29 +248,6 @@ void ShaderFog::setUniforms(const glm::mat4& projection) {
 ShaderHandDrawn::ShaderHandDrawn()
 	: AShaderWrapper()
 {
-	// Instantiating shadow textures
-	int width = 127, height = 127, channel = 0;
-	//for (short i = 1; i < 2; ++i) {
-	//	glGenTextures(1, &_shadowLevels[i]);
-	//	glBindTexture(GL_TEXTURE_2D, _shadowLevels[i]);
-	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//	std::cout << "[ShaderHandDrawn] Adding texture:" << ("./resources/tam/tam" + std::to_string(i) + ".png") << std::endl;
-	//	unsigned char *image = stbi_load(
-	//		("./resources/tam/tam" + std::to_string(i) + ".bmp").c_str(),
-	//		&width,
-	//		&height,
-	//		&channel,
-	//		0
-	//	);
-	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	//	//glGenerateMipmap(GL_TEXTURE_2D);
-	//
-	//	glActiveTexture(GL_TEXTURE0 + (i-1));
-	//	glBindTexture(GL_TEXTURE_2D, _shadowLevels[i]);
-	//}
-
-	// instantiating shaderProgram with uniforms
 	_sh = createShaderProgram("hand_drawn",
 		std::vector<std::string>({
 			// vert
@@ -294,11 +267,13 @@ ShaderHandDrawn::ShaderHandDrawn()
 			"Alpha"
 		})
 	);
+
+	setTamTextures();
 }
 
 void ShaderHandDrawn::setUniforms(const glm::mat4& projection) {
 	
-	glUniform1i(_sh->uniform("shadow"), 0);
+	glUniform1i(_sh->uniform("shadow"), _shadLv[0]);
 
 	glUniformMatrix4fv(_sh->uniform("projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
@@ -310,6 +285,48 @@ void ShaderHandDrawn::setUniforms(const glm::mat4& projection) {
 	glUniform3fv(_sh->uniform("La"), 1, glm::value_ptr(glm::vec3(1, 1, 1)));
 }
 
+
+void ShaderHandDrawn::setTamTextures()
+{
+	const std::string path = "./resources/tam/tam";
+	const char *suffixes[] = { "1", "2", "3", "4", "5", "6" };
+
+
+
+	//GLuint targets[] = {
+	//GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+	//GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+	//GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+	//};
+
+	for (int i = 0; i < 6; i++) {
+		int channel;
+		int width, height;
+		std::string filename;
+		filename = path + suffixes[i] + ".png";
+		unsigned char *img = stbi_load(filename.c_str(), &width, &height, &channel, 0);
+
+		glActiveTexture(GL_TEXTURE0 + i);
+		glGenTextures(1, &_shadLv[i]);
+		glBindTexture(GL_TEXTURE_2D, _shadLv[i]);
+
+		if (img) {
+			if (channel == 4) {
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
+			}
+			else {
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+			}
+		}
+		else {
+			std::cerr << "Failed to load cube map [" << filename.c_str() << ']' << std::endl;
+		}
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		stbi_image_free(img);
+	}
+}
 
 
 /*********************/
@@ -430,9 +447,9 @@ void ShaderSkyBox::setMapTextures(const std::string& path)
 	}
 }
 
-/*********************/
-/**    Refraction     **/
-/*********************/
+/********************/
+/**   Refraction   **/
+/********************/
 
 ShaderRefract::ShaderRefract(const std::string& path, glm::vec3 *camPos)
 	: AShaderWrapper(), _camPos(camPos)

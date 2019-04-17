@@ -18,7 +18,5 @@ public:
 private:
 	void perform_draw() override;
 	void setup() override;
-
-
 };
 

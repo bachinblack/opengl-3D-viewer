@@ -63,6 +63,41 @@ void MyGlWindow::getViewProjection(void) {
 	_projection = glm::perspective(45.0f, 1.0f*_width / _height, 0.1f, 500.0f);
 }
 
+void MyGlWindow::performDraw(void)
+{
+	// drawing every items from every shaders
+	for (auto it : _shaders) {
+		it->campos = _viewer->getViewPoint();
+		it->computeLight(lightSources, _view);
+		it->draw(_view, _projection);
+	}
+}
+
+void MyGlWindow::drawThroughFbo(void)
+{
+	// binding the render_tex to draw on it
+	glClearColor(0.2f, 0.2f, .2f, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, _fbo->getFboId());
+	glViewport(0, 0, _width, _height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+
+
+	performDraw();
+
+	// going back to screen and drawing the render_tex
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+
+	_ctv->setTexture(texManager["render_tex"]);
+	_ctv->draw();
+
+	//_ctv->setDepthOnly(true);
+	//_ctv->setTexture(texManager["depth_tex"]);
+	//_ctv->draw();
+}
+
 void MyGlWindow::draw()
 {	
 	this->getViewProjection();
@@ -71,11 +106,10 @@ void MyGlWindow::draw()
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// drawing every items from every shaders
-	for (auto it : _shaders) {
-		it->campos = _viewer->getViewPoint();
-		it->computeLight(lightSources, _view);
-		it->draw(_view, _projection);
+	if (_useFbo) {
+		drawThroughFbo();
+	} else {
+		performDraw();
 	}
 }
 
@@ -85,9 +119,47 @@ void MyGlWindow::resize(int width, int height)
 	_height = height;
 }
 
-void MyGlWindow::init(void) {
-	// creating temporary elements for AItems
 
+void MyGlWindow::setupFBO() {
+	texManager.createTexture("render_tex", "", 800, 800, GL_NEAREST, GL_RGB, GL_RGB, false);
+	texManager.createTexture("depth_tex", "", 800, 800, GL_LINEAR, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, true);
+
+	_fbo = new FboManager();
+	_fbo->initFbo();
+
+	_fbo->bindToFbo(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texManager["render_tex"]);
+	_fbo->bindToFbo(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texManager["depth_tex"]);
+
+	_fbo->setDrawBuffers();
+	if (!_fbo->checkFboStatus()) {
+		std::cout << "failed to setup FBO" << std::endl;
+		return;
+	}
+}
+
+
+void MyGlWindow::initFbo(const std::string& fragShader) {
+	_useFbo = true;
+	_ctv = new TextureViewer(0, "./postshaders/default.vert", fragShader);
+	setupFBO();
+}
+
+void MyGlWindow::initFboSubroutine(const std::string& subroutine) {
+	// We get to choose between Blurring, Sharpening and EdgeDetection
+	_useFbo = true;
+	_ctv = new TextureViewer(subroutine);
+	setupFBO();
+}
+
+
+void MyGlWindow::init(void) {
+	
+	// call this to draw through a FBO (used to add postRendering shaders)
+	//initFbo("./postshaders/sobel.frag");
+	// call this to draw through a FBO using subroutines
+	//initFboSubroutine("EdgeDetection");
+	
+	// creating temporary elements for AItems
 	Transform tmp(
 		glm::vec3(-40, -6, -40),
 		glm::vec3(1, 1, 1),
@@ -102,7 +174,6 @@ void MyGlWindow::init(void) {
 
 
 	// creating lights
-
 	glm::vec3 cols[5] = {
 		glm::vec3(.7, .7, .7),
 		glm::vec3(.8, .2, .2),
@@ -111,7 +182,7 @@ void MyGlWindow::init(void) {
 		glm::vec3(1, 1, 1)
 	};
 
-	for (short i = 0; i < 5; i += 1)
+	for (short i = 0; i < 1; i += 1)
 	{
 		tmp.setPosition(glm::vec3(10 * cos(i*1.25664), 8, 10 * sin(i*1.25664)));
 		lightSources.push_back(new Light(tmp, shader, cols[4]));
@@ -140,14 +211,7 @@ void MyGlWindow::init(void) {
 	vis.setColor(glm::vec3(1, 0, 1));
 	vis.setShininess(10);
 	tmp.setScale(.6f);
-	tmp.setRotation(Rotation(-90, 1, 0, 0));
-	sh->addItem(new VBOTeapot(tmp, shader, 16, glm::mat4(1), vis));
-
-
-	//AShaderWrapper *silhouette = new ShaderSilouette();
-	//_shaders.push_back(silhouette);
-
-	//silhouette->addItems(sh->getItems());
+	sh->addItem(new TexturedMesh(tmp, shader, "./resources/teapot.obj", vis));
 
 	//sh = new ShaderPhong();
 	//_shaders.push_back(sh);
@@ -164,58 +228,52 @@ void MyGlWindow::init(void) {
 	//vis.setColor(glm::vec3(0, 1, 0));
 	//sh->addItem(new LightItem(tmp, shader, vis));
 
-	//sh = new ShaderFog();
-	//_shaders.push_back(sh);
-	//shader.program = sh->getShaderProgram();
-	//tmp.setPosition(glm::vec3(0, 0, 0));
-	//tmp.setScale(12);
-	//sh->addItem(new LightItem(tmp, shader, vis));
-
-	//tmp.setPosition(glm::vec3(0, 12, 0));
-	//vis.setColor(glm::vec3(1, 0, 1));
-	//vis.setShininess(10);
-	//tmp.setScale(.6f);
-	//tmp.setRotation(Rotation(-90, 1, 0, 0));
-	//sh->addItem(new VBOTeapot(tmp, shader, 16, glm::mat4(1), vis));
-
-	//tmp.setPosition(glm::vec3(5, 12, 0));
-	//vis.setColor(glm::vec3(1, .7, 0));
-	//sh->addItem(new VBOTeapot(tmp, shader, 16, glm::mat4(1), vis));
-
 	//sh = new ShaderHandDrawn();
 	//_shaders.push_back(sh);
 	//shader.program = sh->getShaderProgram();
-	//tmp.setPosition(glm::vec3(0, 0, 0));
-	//
+	
+	//tmp.setPosition(glm::vec3(-3, -6, -3));
+	//tmp.setScale(1);
+	//vis.setShininess(1);
+	//vis.setColor(glm::vec3(1, .4, .1));
+	//tmp.setRotation(Rotation(0, 1, 0, 0));
+	//sh->addItem(new  TexturedMesh(tmp, shader, "C:/Graphics/res/diamonds1/diamonds1.obj", vis));
+
+
+
 
 	//tmp.setScale(1);
 	//tmp.setPosition(glm::vec3(0, 0, 0));
 	//sh->addItem(new LightItem(tmp, shader, vis));
 
 
-	tmp.setPosition(glm::vec3(4, 4, 0));
-	tmp.setScale(.01f);
-	tmp.setRotation(45, 0, 1, 0);
+	tmp.setPosition(glm::vec3(10, 0, 10));
+	tmp.setScale(1);
+	tmp.setRotation(0, 0, 1, 0);
 	vis.setShininess(1);
 	vis.setColor(glm::vec3(.5, .5, .5));
-	//sh->addItem(new Mesh(tmp, shader, "./resources/goku.obj", vis));
-
-	//sh = new ShaderTextured();
-	//_shaders.push_back(sh);
-	//shader.program = sh->getShaderProgram();
-
-	//sh->addItem(new TexturedItem(tmp, shader, "./resources/goku.obj", "./resources/brick1.jpg", vis));
-	//sh->addItem(new TexturedSphere(tmp, shader, "./resources/earth.jpg", vis));
-	//sh->addItem(new TexturedMesh(tmp, shader, "./resources/SkullKid/skull_kid.obj", "./resources/SkullKid/model.nut0.png", vis));
-	//sh->addItem(new TexturedMesh(tmp, shader, "C:/Graphics/res/Sponza-master/sponza.obj", vis));
-	//sh->addItem(new TexturedMesh(tmp, shader, "C:/Graphics/res/lucasMother/bs_ears.obj", "C:/Graphics/res/lucasMother/ogre_diffuse.png", vis));
+	//sh->addItem(new TexturedMesh(tmp, shader, "./resources/SkullKid/skull_kid.obj", vis));
+	//sh->addItem(new TexturedMesh(tmp, shader, "C:/Graphics/res/data_mountain/mount.blend1.obj", vis));
 
 
-	sh = new ShaderSkyBox("C:/Graphics/res/textures/", _viewer->getViewPointPtr());
+	sh = new ShaderTextured();
 	_shaders.push_back(sh);
 	shader.program = sh->getShaderProgram();
 
+
+
+	//sh->addItem(new TexturedSphere(tmp, shader, "./resources/earth.jpg", vis));
+	sh->addItem(new TexturedMesh(tmp, shader, "./resources/SkullKid/skull_kid.obj", vis));
+	//sh->addItem(new TexturedMesh(tmp, shader, "C:/Graphics/res/Sponza-master/sponza.obj", vis));
+	//sh->addItem(new TexturedMesh(tmp, shader, "C:/Graphics/res/data_mountain/mount.blend1.obj", vis));
+
+
+	sh = new ShaderSkyBox("./resources/skybox/", _viewer->getViewPointPtr());
+	_shaders.push_back(sh);
+	shader.program = sh->getShaderProgram();
+
+	tmp.setPosition(glm::vec3(0, 0, 0));
 	tmp.setScale(2);
-	sh->addItem(new CubeMappedMesh(tmp, shader, "C:/Graphics/res/teapot.obj", vis));
+	sh->addItem(new CubeMappedMesh(tmp, shader, "./resources/teapot.obj", vis));
 	sh->addItem(new Skybox(tmp, shader, vis));
 }

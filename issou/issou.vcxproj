@@ -154,6 +154,9 @@
     <ClCompile Include="CheckeredFloor.cpp" />
     <ClCompile Include="ColorCube.cpp" />
     <ClCompile Include="CubeMappedMesh.cpp" />
+    <ClCompile Include="FBO\fboManager.cpp" />
+    <ClCompile Include="FBO\textureManager.cpp" />
+    <ClCompile Include="FBO\TextureViewer.cpp" />
     <ClCompile Include="LightItem.cpp" />
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="Global.cpp" />
@@ -187,6 +190,9 @@
     <ClInclude Include="CheckeredFloor.h" />
     <ClInclude Include="ColorCube.h" />
     <ClInclude Include="CubeMappedMesh.h" />
+    <ClInclude Include="FBO\fboManager.h" />
+    <ClInclude Include="FBO\textureManager.h" />
+    <ClInclude Include="FBO\TextureViewer.h" />
     <ClInclude Include="LightItem.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="Global.h" />
